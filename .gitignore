@@ -1,0 +1,92 @@
+# Django related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+*.pyc
+*.bak
+*.swp
+*.~lock.*
+*.log
+*.pot
+*.mo
+*.egg-info/
+*.egg
+
+# Static files (if not using a separate static file server)
+/static/
+
+# Media files (if not using a separate media file server)
+/media/
+
+# Development and local settings
+*.env
+*.env.*
+*.local
+local_settings.py
+settings_local.py
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+*.class
+
+# Temporary files
+*.tmp
+
+# Build directories
+build/
+dist/
+__pycache__/
+
+# macOS folder attributes
+.AppleDouble
+.DS_Store
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Node.js specific
+node_modules/
+npm-debug.log*
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Compiled C extensions
+*.so
+
+# Caches
+__pycache__/
+.ccache/
+
+# PyInstaller
+*.spec
+
+# Ignore pipenv's virtual environment
+/.venv
+
+# Ignore pip's cache
+/.cache
+
+# Ignore Python Debugger
+.python-version
+
+# Django Secret Key
+*.secret_key

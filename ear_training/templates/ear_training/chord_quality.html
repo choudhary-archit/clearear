@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Chord Quality</title>
+{% endblock %}
+
+{% block content %}
+
+<h1>Chord Quality</h1>
+<p>
+    A triad will play. Guess the chord quality (Maj, Min, Aug, Dim).
+</p>
+
+<button id="playButton">Play</button>
+
+{% include 'ear_training/chord_quality_js.html' %}
+
+{% endblock %}

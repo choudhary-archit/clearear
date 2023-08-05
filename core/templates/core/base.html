@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+    {% block title %}
+    {% endblock %}
+        <link rel="stylesheet" type="text/css" href="{% static 'core/style.css' %}">
+    </head>
+
+    <body>
+        <header>
+            <nav>
+                <div class="logo"><a href="{% url 'core:home' %}">ClearEar</a></div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'ear_training:chord_quality' %}">Play</a></li>
+                    <li><a href="#">Dashboard</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="content">
+        {% block content %}
+        {% endblock %}
+        </div>
+    </body>
+
+</html>
