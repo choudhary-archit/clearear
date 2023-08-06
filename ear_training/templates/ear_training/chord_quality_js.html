@@ -1,39 +1,32 @@
 {% load static %}
 
 <script>
+
+    const chordTones = [
+        [0, 4, 7], /* major */
+        [0, 3, 7], /* minor */
+        [0, 3, 6], /* dim */
+        [0, 4, 8] /* aug */
+    ]
+
     const playButton = document.getElementById('playButton');
-    playButton.addEventListener('click', () => {
-        /* 0, 1, 2, 3 - major, minor, dim, aug */
-        var chordQuality = Math.floor(Math.random() * 4);
+    const answerButton = document.getElementById('answerButton');
+    const playListener = new AbortController();
+    const answerListener = new AbortController();
 
-        /*
-        C0 - B0: 12 semitones
-        C1 - B1: 12 semitones
-        C2 - B2: 12 semitones
-        C3 - B3: 12 semitones
-        ...
-        C7 - B7: 12 semitones
-        C8: 1 semitone
+    const numOfAttempts = 3;
+    let attemptsLeft = numOfAttempts;
 
-        total 12*8 + 1 = 85 semitones.
-        so r (root) can go from 0 to 85 - 8 = 77
-        */
-        let r = Math.floor(Math.random() * (50 - 20)) + 20;
-
-        let chordTones = [
-            [0, 4, 7], /* major */
-            [0, 3, 7], /* minor */
-            [0, 3, 6], /* dim */
-            [0, 4, 8] /* aug */
-        ]
-
-        console.log(chordQuality);
-        playChord(chordTones[chordQuality].map((note) => r + note));
-    });
+    function generateChord() {
+        chordQuality = Math.floor(4 * Math.random());
+        // From the 20th semitone from C0 to the 50th 
+        const r = Math.floor(Math.random() * (50 - 20)) + 20; 
+        return [chordTones[chordQuality].map((note) => r + note), chordQuality];
+    }
 
     function playChord(arrayOfNotes) {
         const numberOfNotes = arrayOfNotes.length;
-        let arrayOfAudioPlayers = [];
+        const arrayOfAudioPlayers = [];
         for (i = 0; i < numberOfNotes; i++) {
             noteFilename = noteNameFromSemitones(arrayOfNotes[i])
                                     + octaveFromSemitones(arrayOfNotes[i]) + '.mp3';
@@ -56,4 +49,47 @@
     function octaveFromSemitones(semitones) {
         return Math.floor(semitones / 12);
     }
+
+    function chordQualityFromIndex(index) {
+        const chordQualities = ['Major', 'Minor', 'Diminished', 'Augmented'];
+        return chordQualities[index];
+    }
+
+    function checkAnswer(answerChordQuality) {
+        const selectedRadioButton = document.querySelector('input[name=choice]:checked');
+        const selectedChoice = selectedRadioButton.value;
+
+        if (selectedChoice == answerChordQuality) {
+            alert(`Correct answer!`);
+            nextQuestion(start = false);
+        } else {
+            attemptsLeft--;
+            if (attemptsLeft == 0) {
+                alert(`You're out of tries! The correct answer was: ${chordQualityFromIndex(answerChordQuality)}`);
+                nextQuestion(start = false);
+            } else {
+                alert(`Wrong answer!`);
+            }
+        }
+    }
+
+    function nextQuestion(start = false) {
+        attemptsLeft = numOfAttempts;
+        const chordNotesAndQuality = generateChord();
+        chordNotes = chordNotesAndQuality[0];
+        chordQuality = chordNotesAndQuality[1];
+
+        if (start == false) {
+            playListener.abort();
+            answerListener.abort();
+        }
+
+        playButton.addEventListener('click', () => playChord(chordNotes),
+                                    {signal: answerListener.signal});
+        answerButton.addEventListener('click', () => checkAnswer(chordQuality),
+                                    {signal: playListener.signal});
+    }
+
+    nextQuestion(start = true);
+
 </script>

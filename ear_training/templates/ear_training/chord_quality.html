@@ -12,6 +12,21 @@
     A triad will play. Guess the chord quality (Maj, Min, Aug, Dim).
 </p>
 
+<form>
+    <input type="radio" name="choice" value="0">
+    <label>Major</label>
+
+    <input type="radio" name="choice" value="1">
+    <label>Minor</label>
+
+    <input type="radio" name="choice" value="2">
+    <label>Diminished</label>
+
+    <input type="radio" name="choice" value="3">
+    <label>Augmented</label>
+</form>
+
+<button id="answerButton">Submit guess</button>
 <button id="playButton">Play</button>
 
 {% include 'ear_training/chord_quality_js.html' %}
