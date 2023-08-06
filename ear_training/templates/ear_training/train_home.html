@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+<title>Train</title>
+{% endblock %}
+
+{% block content %}
+
+<p>
+    <a href="{% url 'ear_training:chord_quality' %}">Chord Quality</a>
+    <a href="{% url 'ear_training:rhythmic_dictation' %}">Rhythmic Dictation</a>
+</p>
+
+{% endblock %}
