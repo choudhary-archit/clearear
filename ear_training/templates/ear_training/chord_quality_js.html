@@ -55,41 +55,37 @@
         return chordQualities[index];
     }
 
+    function nextQuestion() {
+        attemptsLeft = numOfAttempts;
+        chordNotesAndQuality = generateChord();
+        chordNotes = chordNotesAndQuality[0];
+        chordQuality = chordNotesAndQuality[1];
+    }
+
     function checkAnswer(answerChordQuality) {
         const selectedRadioButton = document.querySelector('input[name=choice]:checked');
         const selectedChoice = selectedRadioButton.value;
 
         if (selectedChoice == answerChordQuality) {
             alert(`Correct answer!`);
-            nextQuestion(start = false);
+            nextQuestion();
         } else {
             attemptsLeft--;
             if (attemptsLeft == 0) {
                 alert(`You're out of tries! The correct answer was: ${chordQualityFromIndex(answerChordQuality)}`);
-                nextQuestion(start = false);
+                nextQuestion();
             } else {
                 alert(`Wrong answer!`);
             }
         }
     }
 
-    function nextQuestion(start = false) {
-        attemptsLeft = numOfAttempts;
-        const chordNotesAndQuality = generateChord();
-        chordNotes = chordNotesAndQuality[0];
-        chordQuality = chordNotesAndQuality[1];
+    // Using 'var' is important, so that nextQuestion() can edit them from
+    // within the function
+    var chordNotesAndQuality = generateChord();
+    var chordNotes = chordNotesAndQuality[0];
+    var chordQuality = chordNotesAndQuality[1];
 
-        if (start == false) {
-            playListener.abort();
-            answerListener.abort();
-        }
-
-        playButton.addEventListener('click', () => playChord(chordNotes),
-                                    {signal: answerListener.signal});
-        answerButton.addEventListener('click', () => checkAnswer(chordQuality),
-                                    {signal: playListener.signal});
-    }
-
-    nextQuestion(start = true);
-
+    playButton.addEventListener('click', () => playChord(chordNotes));
+    answerButton.addEventListener('click', () => checkAnswer(chordQuality));
 </script>
