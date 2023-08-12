@@ -1,0 +1,124 @@
+{% load static %}
+
+<script>
+    function sumOfArray(array) {
+        let sum = 0;
+        for (let i = 0; i < array.length; i++) {
+            sum += array[i];
+        }
+        return sum;
+    }
+
+    function generateRhythmNumerical(bars = 1) {
+        let rhythmNumerical = [];
+
+        for (let bar = 0; bar < bars; bar++) {
+            rhythmNumerical[bar] = [];
+            let sumLeft = 16;
+            while (sumLeft > 0) {
+                const randomNum = Math.floor(Math.log2(sumLeft) * Math.random());
+                rhythmNumerical[bar].push(4 - randomNum);
+                sumLeft -= 2**randomNum;
+            }
+        }
+
+        return rhythmNumerical;
+    }
+
+    const noteValues = ['w', 'h', 'q', 'e', 's', 't'];
+
+    function getRhythmString(rhythmNumerical) {
+        let rhythmString = ""; 
+        for (let b = 0; b < rhythmNumerical.length; b++) {
+            for (let i = 0; i < rhythmNumerical[b].length; i++) {
+                rhythmString += noteValues[rhythmNumerical[b][i]];
+            }
+            if (b != rhythmNumerical.length - 1) {
+                rhythmString += "|";
+            }
+        }
+        return rhythmString;
+    }
+
+    const audioContext = new AudioContext();
+
+    function playSound(soundBuffer, startTime, duration) {
+        const sourceNode = audioContext.createBufferSource();
+        sourceNode.buffer = soundBuffer;
+        sourceNode.connect(audioContext.destination);
+
+        sourceNode.start(startTime);
+        console.log("Started: ")
+        sourceNode.stop(startTime + duration);
+    }
+
+    function getNoteDuration(noteValue, secondsPerBeat) {
+        return (4 / 2**(noteValue)) * secondsPerBeat; // noteValue: 1, ..., 4
+    }
+
+    async function playRhythm(soundBuffer, rhythmNumerical, secondsPerBeat, emptyBars = 1) {
+        // I want one bar of the metronome before the rhythm starts playing, but
+        // when I uncomment the following line to do this, it cuts off the last bar of
+        // the generated rhythm...
+        //
+        // await new Promise(resolve => setTimeout(resolve, emptyBars * 4 * secondsPerBeat * 1000));
+
+        let startTime = 0;
+        for (let bar = 0; bar < rhythmNumerical.length; bar++) {
+            for (let noteIndex = 0; noteIndex < rhythmNumerical[bar].length; noteIndex++) {
+                const noteDuration = getNoteDuration(rhythmNumerical[bar][noteIndex], secondsPerBeat);
+                playSound(soundBuffer, startTime, noteDuration);
+                startTime += noteDuration;
+            }
+        }
+    }
+
+    async function playMetronome(soundBuffer, numOfBars, secondsPerBeat) {
+        let startTime = 0;
+        for (let i = 0; i < 4 * numOfBars; i++) {
+            playSound(soundBuffer, startTime, secondsPerBeat);
+            startTime += secondsPerBeat;
+        }
+    }
+
+    const rhythmSoundFile = "{% static 'ear_training/piano_notes/' %}" + "c4.mp3";
+    const metronomeSoundFile = "{% static 'ear_training/miscellaneous/' %}" + "metronome.mp3";
+
+    function resumeAudioContext() {
+        if (audioContext.state == "suspended") {
+            audioContext.resume();
+        }
+    }
+
+    async function playAudio(rhythmNumerical, secondsPerBeat) {
+        fetch(rhythmSoundFile)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(soundBuffer => playRhythm(soundBuffer, rhythmNumerical, secondsPerBeat)) // seconds per beat, abstract it out
+            .catch(error => console.log("Error loading beat sound: ", error));
+
+        fetch(metronomeSoundFile)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(soundBuffer => playMetronome(soundBuffer, rhythmNumerical.length, secondsPerBeat)) // seconds per beat, abstract it out
+            .catch(error => console.log("Error loading metronome: ", error));
+    }
+
+    function checkAnswer(rhythmString) {
+        // adapt chord quality implementation
+    }
+
+    var rhythmNumerical = generateRhythmNumerical(bars = 4);
+    var rhythmString = getRhythmString(rhythmNumerical);
+    console.log(rhythmString);
+    console.log(rhythmNumerical);
+
+    const playButton = document.getElementById('playButton');
+    const answerButton = document.getElementById('answerButton');
+    playButton.addEventListener('click', () => {
+        resumeAudioContext();
+        playAudio(rhythmNumerical, 0.7);
+    });
+    answerButton.addEventListener('click', () => checkAnswer(rhythmString));
+
+</script>

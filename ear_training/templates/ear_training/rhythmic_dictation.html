@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}
 <title>Rhythmic Dictation</title>
@@ -10,4 +11,11 @@
 <p>
     So, a rhythm will be played. Transcribe the rhythm.
 </p>
+
+<button id="playButton">Play</button><br><br>
+<input type="text" id="answerBox"><br>
+<button id="answerButton">Submit</button>
+
+{% include 'ear_training/rhythmic_dictation_js.html' %}
+
 {% endblock %}
